@@ -1,8 +1,13 @@
 #include "../include/forc.hpp"
 
-bool Forca::verifica_palavras(string palavras) {
+Forca::Forca(string arq_palavras, string arq_score) {
+    arquivo_palavras = arq_palavras;
+    arquivo_score = arq_score;
+}
+
+bool Forca::verifica_palavras() {
     ifstream file_palavras;
-    file_palavras.open(palavras);
+    file_palavras.open(arquivo_palavras);
     string linha;
     while (getline(file_palavras, linha)) { //verifica cada palavra do arquivo de palavrea
         for (int i = 0; i < linha.size(); i++) { //verifica cada letra da palavra sendo analisada
@@ -27,9 +32,9 @@ bool Forca::verifica_palavras(string palavras) {
 
 //verifica validade de arquivo de scores
 // falta verificar se espaços com nome, dificuldade ou pontuação estão vazios
-bool Forca::verifica_score(string scores) {
+bool Forca::verifica_score() {
     fstream file_scores;
-    file_scores.open(scores);
+    file_scores.open(arquivo_score);
     string linha;
     
     while(getline(file_scores, linha)) { // conta quantidade de ; por linha 
@@ -86,9 +91,9 @@ int Forca::menu () {
     return escolha;
 }
 
-void Forca::imprime_score(string scores) {
+void Forca::imprime_score() {
     fstream file_scores;
-    file_scores.open(scores);
+    file_scores.open(arquivo_score);
     string linha;
     cout << "\n\n<><><><><><><><> - SCORES ANTERIORES - <><><><><><><><>\n\n ";
     
@@ -98,7 +103,7 @@ void Forca::imprime_score(string scores) {
 
 }
 
-int Forca::escolhe_dificuldade() {
+void Forca::escolhe_dificuldade() {
     int escolha = 0;
     
     cout << "\n\n<><><><><><><><> - VAMOS INICIAR - <><><><><><><><>\n\n ";
@@ -114,21 +119,38 @@ int Forca::escolhe_dificuldade() {
             break;
         }
     }
-    return escolha;
-}
-
-// setters e getters
-void Forca::set_dificuldade(int d) {
-    if (d == 1){
-        dificuldade = "Fácil";
-    }else if (d == 2){
-        dificuldade = "Médio";
+    if (escolha == 1){
+        dificuldade = "Facil";
+    }else if (escolha == 2){
+        dificuldade = "Medio";
     }else{
         dificuldade = "Dificil";
     }
+}
+ 
+
+
+void Forca::carrega_palavras() {
+    ifstream file_palavras;
+    file_palavras.open(arquivo_palavras);
+    string linha;
+    while (getline(file_palavras, linha)) {
+        palavras.push_back(linha);
+    }
+    cout << "Imprimindo palavras do vector\n\n";
+    for (auto i = 0; i < palavras.size(); i++) {
+        cout << palavras.at(i) << endl;  
+    }
+
 
 }
 
-string Forca::sorteia_palavra(string dificuldade){
+// setters e getters
+    string Forca::get_dificuldade() {
+        return dificuldade;
+    }
 
-}
+
+//string Forca::sorteia_palavra(string dificuldade){
+
+//}

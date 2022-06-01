@@ -12,23 +12,25 @@ int main(int argc, char *argv[]){
 
     string palavras = argv[1];
     string scores = argv[2];
-    int dificuldade;
 
-    Forca* jogo = new Forca();
-    jogo->abertura(jogo->verifica_score(scores), jogo->verifica_palavras(palavras));
+
+    Forca* jogo = new Forca(palavras, scores);
+ 
+    jogo->abertura(jogo->verifica_score(), jogo->verifica_palavras());
     
     int escolha = 2;
     while (escolha == 2){               // ***modularizar isso em uma função fora da classe Forca
         escolha = jogo->menu();
         if (escolha == 1)
             break;
-        jogo->imprime_score(scores);
+        jogo->imprime_score();
     }
 
-    jogo->set_dificuldade(jogo->escolhe_dificuldade());
-
-
-
+    jogo->escolhe_dificuldade();
+    
+    string dificuldade;
+    dificuldade = jogo->get_dificuldade();
+    cout << dificuldade;
 
 
 
