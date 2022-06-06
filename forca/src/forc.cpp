@@ -1,5 +1,7 @@
 #include "../include/forc.hpp"
 
+
+
 Forca::Forca(string arq_palavras, string arq_score) {
     arquivo_palavras = arq_palavras;
     arquivo_score = arq_score;
@@ -61,13 +63,13 @@ void Forca::abertura(bool validade_score, bool validade_palavras) {
     if (validade_palavras && validade_score){
         cout<< ">  Arquivos OK!\n";
     }else if (!validade_palavras && !validade_score){
-        cout<< ">  Arquivo de Palavras e Scores inválido!";
+        cout<< ">  Arquivo de Palavras e Scores invalidos!";
         exit(-1);
     }else if(!validade_palavras){
-        cout<< ">  Arquivo de Palavras inválido!";
+        cout<< ">  Arquivo de Palavras invalido!";
         exit(-1);
     }else{
-        cout<< ">  Arquivo de Scores inválido!";
+        cout<< ">  Arquivo de Scores invalido!";
         exit(-1);
     }
     cout<< "-----------------------------------------------------------------\n";
@@ -80,13 +82,13 @@ int Forca::menu () {
     bool escolha_invalida = true;
     cout << "\n\n<><><><><><><><> - JOGO DA FORCA - <><><><><><><><>\n\n ";
     while(escolha_invalida) {
-        cout << "Escolha a opção desejada:\n\n";
+        cout << "Escolha a alternativa desejada:\n\n";
         cout << "1 - Inciar jogo \n2 - Ver scores anteriores\nSua escolha:  ";
         cin >> escolha;
         if (escolha == 1 || escolha == 2)
             escolha_invalida = false;
         else    
-            cout << "\n\n\nXXXXXXX - Digite uma escolha válida! - XXXXXXX\n\n\n";
+            cout << "\n\n\nXXXXXXX - Digite uma escolha valida! - XXXXXXX\n\n\n";
     }
     return escolha;
 }
@@ -109,8 +111,8 @@ void Forca::escolhe_dificuldade() {
     cout << "\n\n<><><><><><><><> - VAMOS INICIAR - <><><><><><><><>\n\n ";
 
     while (escolha != 1 && escolha != 2 && escolha != 3) {
-        cout << "Escolha o nível de dificuldade\n";
-        cout << "1 - Fácil\n2 - Médio\n3 - Dificil\n";
+        cout << "Escolha o nivel de dificuldade\n";
+        cout << "1 - Facil\n2 - Medio\n3 - Dificil\n";
         cout << "\nSua esolha: ";
         cin >> escolha;    
         if (escolha != 1 && escolha != 2 && escolha != 3){
@@ -135,14 +137,23 @@ void Forca::carrega_palavras() {
     file_palavras.open(arquivo_palavras);
     string linha;
     while (getline(file_palavras, linha)) {
+      for (int i = 0; i < linha.size(); i++) { //deixa todas as palavras com letras maiúsculas, para padronização
+          linha[i] = toupper(linha[i]);
+      }
+      
+      
         palavras.push_back(linha);
-    }
-    cout << "Imprimindo palavras do vector\n\n";
-    for (auto i = 0; i < palavras.size(); i++) {
-        cout << palavras.at(i) << endl;  
-    }
+  }
+}
 
+void Forca::sorteia_palavra(){
 
+    unsigned seed = time(0);
+    srand(seed);
+
+    int pos = rand() % palavras.size();
+    palavra_secreta = palavras.at(pos);
+    palavras_jogadas.push_back(palavra_secreta);
 }
 
 // setters e getters
@@ -151,6 +162,186 @@ void Forca::carrega_palavras() {
     }
 
 
-//string Forca::sorteia_palavra(string dificuldade){
 
-//}
+bool Forca::verifica_letra(char letra_palavra){
+  bool acerto = false;
+		if(chute == letra_palavra) {
+			acerto = true;
+      contador_acertos++;
+		}
+
+  return acerto;
+}
+
+
+void Forca::imprime_secreta(){
+  for(int i = 0; i < palavra_secreta.size() ;i++){
+    if(verifica_letra(palavra_secreta[i])){
+      chutes_certos[i] = chute;
+    }
+    if(i == palavra_secreta.size()-1){
+      contador_acertos = 0;
+      contador_turnos++;
+    }
+    if(chutes_certos[i] == '$'){
+      cout << "_";
+    }else{
+      cout << chutes_certos[i];
+    }
+  }
+  cout << endl;
+}
+
+void Forca::le_chute() {
+    tentativas++;
+    cout << "Digite seu chute: ";
+    cin >> chute;
+    chute = toupper(chute); //transforma chute em maiusculo para evitar erros
+    for(int i = 0; i < palavra_secreta.size();i++){
+        if(verifica_letra(palavra_secreta[i])){
+          pontos++;
+        }else if(contador_acertos == 0 && i == palavra_secreta.size()-1){
+          cout << "\tPoxa, essa letra nao esta na palavra! Tente novamente.\n";
+          pontos--;
+          erros++;
+        }
+    }
+}
+
+//VITORIA FAMILIA TUDO NOSSO NADA DELES!!!
+
+void Forca::imprime_boneco(){
+  cout << endl;
+  cout << "XXXXXXXXXXXXXXX - TURNO " << contador_turnos<< " - XXXXXXXXXXXXXXX" << endl;
+  cout << endl;
+  if(erros == 0){
+    cout << "  _______       "<< endl;
+  	cout << " |/      |      "<< endl;
+  	cout << " |              "<< endl;
+  	cout << " |              "<< endl;
+  	cout << " |              "<< endl;
+  	cout << " |              "<< endl;
+  	cout << "_|___           "<< endl;
+  	cout << endl << endl;
+  }else  if(erros == 1){
+    cout << "  _______       "<< endl;
+  	cout << " |/      |      "<< endl;
+  	cout << " |       o      "<< endl;
+  	cout << " |              "<< endl;
+  	cout << " |              "<< endl;
+  	cout << " |              "<< endl;
+  	cout << "_|___           "<< endl;
+  	cout << endl << endl;
+  }else  if(erros == 2){
+    cout << "  _______       "<< endl;
+  	cout << " |/      |      "<< endl;
+  	cout << " |       o      "<< endl;
+  	cout << " |      /       "<< endl;
+  	cout << " |              "<< endl;
+  	cout << "_|___           "<< endl;
+  	cout << endl << endl;
+  }else  if(erros == 3){
+    cout << "  _______       "<< endl;
+  	cout << " |/      |      "<< endl;
+  	cout << " |       o      "<< endl;
+  	cout << " |      /|      "<< endl;
+  	cout << " |              "<< endl;
+    cout << " |              "<< endl;
+  	cout << "_|___           ";
+  	cout << endl << endl;
+  }else  if(erros == 4){
+    cout << "  _______       "<< endl;
+  	cout << " |/      |      "<< endl;
+  	cout << " |       o      "<< endl;
+  	cout << " |      /|\\    "<< endl;
+  	cout << " |              "<< endl;
+  	cout << " |              "<< endl;
+  	cout << "_|___           "<< endl;
+  	cout << endl << endl;
+  }else  if(erros == 5){
+    cout << "  _______       "<< endl;
+  	cout << " |/      |      "<< endl;
+  	cout << " |       o      "<< endl;
+  	cout << " |      /|\\    "<< endl;
+  	cout << " |      /       "<< endl;
+  	cout << " |              "<< endl;
+  	cout << "_|___           "<< endl;
+  	cout << endl << endl;
+  }else  if(erros == 6){
+    cout << "  _______       "<< endl;
+  	cout << " |/      |      "<< endl;
+  	cout << " |       o      "<< endl;
+  	cout << " |      /|\\    "<< endl;
+  	cout << " |      / \\    "<< endl;
+  	cout << " |              "<< endl;
+  	cout << " |              "<< endl;
+  	cout << "_|___           "<< endl;
+  	cout << endl << endl;
+  }
+}
+
+void Forca::gera_dica () {
+        unsigned seed = time(0);
+        srand(seed);
+
+    if (dificuldade == "Facil") {
+        int qtd_dica = 2;//(rand() % (palavra_secreta.size()/5));
+        int cont = 0;
+        if (qtd_dica > 0) {
+            for (int i = 0; i < palavra_secreta.size(); i++) {
+                int int_letra = (int)palavra_secreta[i];
+                if (int_letra != 65 && int_letra != 69 && int_letra != 73 && int_letra != 79 && int_letra != 85) {
+                    cout << "dica: " << (char)int_letra << endl;
+                    cont++;
+                }
+
+                if (cont == qtd_dica){
+                    break;
+                }
+            }
+        }
+    }else if (dificuldade == "Medio"){
+
+    }
+
+}
+
+int Forca::get_erros(){
+  
+  return erros;
+}
+
+int Forca::get_pontos(){
+  return pontos;  
+                  
+}  
+string Forca::get_secreta(){
+    return palavra_secreta;
+}
+
+bool Forca::condicao_vitoria(){
+  int BO = 0;
+  BO = 0;
+  for(int i = 0; i < palavra_secreta.size();i++){
+    if(chutes_certos[i] == '$'){
+      BO++;
+    }
+  }
+  if(pontos == palavra_secreta.size()){
+
+    pontos = pontos+2;
+    if (erros == 0) {
+      pontos++;
+    }
+    return true;
+  }else if(BO == 0){
+    return true;
+  }else{
+    return false;
+  }
+  
+}
+
+/*void Forca::remove_palavra() {
+  palavras.erase(pos_secreta);
+}*/
